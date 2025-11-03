@@ -1,7 +1,9 @@
 package controle.clinica;
 
 
+import entidades.Animal;
 import entidades.Cidade;
+import entidades.Raca;
 import entidades.Tutores;
 import infra.DAO;
 
@@ -10,6 +12,104 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+
+    public static void menuAnimal (Scanner sc){
+
+        int opcao;
+        DAO <Raca> daoRaca = new DAO <>();
+        DAO <Animal> daoAnimal = new DAO <>();
+        DAO <Tutores> daoTutor = new DAO <>();
+
+        do {
+            System.out.println("Digite a opção desejada:");
+            System.out.println("1.Cadastrar Animal");
+            System.out.println("2.Listar animais");
+            System.out.println("3.Encontrar um animal especifico");
+            System.out.println("4.Excluir animal especifico");
+            System.out.println("0.Voltar ao menu principal");
+
+            opcao = sc.nextInt();
+            sc.nextLine();
+
+            switch (opcao) {
+                case 1:
+                    System.out.println("Digite o nome do animal:");
+                    String nomeAnimal = sc.nextLine();
+
+                    System.out.println("Digite o ID da raça do animal:");
+                    Long idRaca = sc.nextLong();
+                    sc.nextLine();
+                    Raca racaEncontrada = daoRaca.findById(Raca.class, idRaca);
+
+                    if(racaEncontrada == null){
+                        System.out.println("Nenhuma raca encontrada");
+                        System.out.println("Parando a execução");
+                        break;
+                    }
+
+                    System.out.println("Digite o ID do tutor: ");
+                    Long idTutor = sc.nextLong();
+                    sc.nextLine();
+                    Tutores tutorEncontrada = daoTutor.findById(Tutores.class, idTutor);
+
+                    if(tutorEncontrada == null){
+                        System.out.println("Nenhum tutor encontrado");
+                        System.out.println("Parando a execução");
+                        break;
+                    }
+
+                    System.out.println("Digite a idade do animal");
+                    int idadeAnimal = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("Digite o peso: ");
+                    String peso = sc.nextLine();
+
+                    Animal novoAnimal = new Animal(nomeAnimal,racaEncontrada,tutorEncontrada,idadeAnimal,peso);
+
+                    daoAnimal.incluirAtomico(novoAnimal);
+                    break;
+                case 2:
+                    List<Animal> animalsList = daoAnimal.listarTodosAtomico(Animal.class);
+                    for(Animal animal : animalsList){
+                        System.out.println("animal:" );
+                        System.out.println(animal);
+                    }
+                    break;
+                case 3:
+                    Animal animalEncontrado;
+
+                    System.out.println("Digite o ID do animal: ");
+                    Long idAnimal = sc.nextLong();
+                    sc.nextLine();
+
+                    animalEncontrado = daoAnimal.findById(Animal.class, idAnimal);
+
+                    if(animalEncontrado == null){
+                        System.out.println("não encontramos nenhum animal");
+                        break;
+                    }
+
+                    System.out.println("Animal encontrado");
+                    System.out.println(animalEncontrado);
+
+                    break;
+                case 4:
+
+                    Animal animalEncontrado2;
+                    System.out.println("Digite o ID do animal: ");
+                    long animalID = sc.nextLong();
+                    sc.nextLine();
+                    daoAnimal.removeById(Animal.class, animalID);
+                    break;
+                default:
+                    System.out.println("opção invalida");
+
+
+            }
+        }while (opcao!=0);
+
+    }
 
     public static void menuTutor (Scanner sc){
 
