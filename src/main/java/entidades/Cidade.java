@@ -18,7 +18,7 @@ public class Cidade {
     @Column(length = 100)
     private String descricao;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     @JoinColumn(name = "estado_id")
     private Uf uf;
 }

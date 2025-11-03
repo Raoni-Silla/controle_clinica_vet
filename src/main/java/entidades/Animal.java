@@ -13,10 +13,13 @@ public class Animal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
+    @JoinColumn
     private Raca raca;
+
+    @ManyToOne
+    @JoinColumn
+    private Tutores tutor;
 
     private String nome;
 

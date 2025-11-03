@@ -18,7 +18,8 @@ public class Tutores {
     @Column(nullable = false, unique = true)
     private String cpf;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
+    @JoinColumn
     private Cidade cidade;
 
     @Column(nullable = false)
