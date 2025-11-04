@@ -9,7 +9,7 @@ public class DAO <E>{
 
     final static EntityManagerFactory emf = Persistence.createEntityManagerFactory("clinica-vet-jpa");
 
-    public DAO <E> incluirAtomico (E entidade){
+    public void incluirAtomico (E entidade){
         EntityManager em = emf.createEntityManager();
 
         em.getTransaction().begin();
@@ -18,7 +18,6 @@ public class DAO <E>{
 
         em.close();
 
-        return this;
     }
 
     public List<E> listarTodosAtomico(Class<E> entidade){

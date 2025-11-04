@@ -4,6 +4,7 @@ import infra.Utilitarios;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -29,15 +30,18 @@ public class Tutores {
     @Column(nullable = false)
     private Long numeroCasa;
 
+    private LocalDate dataNascimento;
+
 
     public Tutores(){}
     
-    public Tutores(String nome, String cpf, Long numeroCasa, String nomeRua, Cidade cidade){
+    public Tutores(String nome, String cpf, Long numeroCasa, String nomeRua, Cidade cidade, LocalDate dataNascimento) {
         setNome(nome);
         setCpf(cpf);
         setNumeroCasa(numeroCasa);
         setNomeRua(nomeRua);
         setCidade(cidade);
+        setDataNascimento(dataNascimento);
     }
 
     public void setNome(String nome) {

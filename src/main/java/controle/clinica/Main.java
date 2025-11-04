@@ -1,17 +1,124 @@
 package controle.clinica;
 
 
-import entidades.Animal;
-import entidades.Cidade;
-import entidades.Raca;
-import entidades.Tutores;
+import entidades.*;
 import infra.DAO;
 
 import javax.swing.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+
+    public static void menuVet (Scanner sc){
+
+        int opcao;
+
+
+        DAO <Animal> daoAnimal = new DAO <>();
+        DAO <Veterinario> daoVet = new DAO <>();
+        DAO <Cidade> daoCidade = new DAO <>();
+
+
+        do {
+
+            System.out.println("Digite a opção desejada:");
+            System.out.println("1.Cadastrar Veterinario");
+            System.out.println("2.Listar Veterinarios");
+            System.out.println("3.Encontrar um veterinario especifico");
+            System.out.println("4.Excluir veterinario especifico");
+            System.out.println("0.Voltar ao menu principal");
+
+
+            opcao = sc.nextInt();
+            sc.nextLine();
+
+            switch (opcao) {
+                case 1:
+
+                    System.out.println("Digite o nome do veterinario:");
+                    String nomevet = sc.nextLine();
+
+                    System.out.println("Digite o cpf do veterinario:");
+                    String cpf = sc.nextLine();
+
+                    System.out.println("Digite o numero da casa do veterinario:");
+                    int numCasa = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("Digite o nome do rua do veterinario:");
+                    String nomeRua = sc.nextLine();
+
+                    System.out.println("Digite o ID da cidade do veterinario:");
+                    long cidadeId = sc.nextLong();
+                    sc.nextLine();
+
+                    System.out.println("Digite a data de nascimento: ");
+                    String dataAniversario = sc.nextLine();
+
+                    Cidade cidade = daoCidade.findById(Cidade.class,cidadeId);
+
+                    if (cidade == null) {
+                        System.out.println("ERRO: Cidade com ID " + cidadeId + " não encontrada. Cadastro cancelado.");
+                        break;
+                    }
+
+                    DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy") ;
+                    LocalDate data_formatada = LocalDate.parse(dataAniversario, formato);
+
+                    System.out.println("Cidade encontrada " + cidade.getNome());
+
+                    Veterinario vet  = new Veterinario(nomevet,cpf,nomeRua,numCasa, cidade, data_formatada);
+
+                    daoVet.incluirAtomico(vet);
+
+                    break;
+
+                case 2:
+                    List<Veterinario> vetList = daoVet.listarTodosAtomico(Veterinario.class);
+                    for(Veterinario vetloop : vetList){
+                        System.out.println("veterinario:" );
+                        System.out.println(vetloop.getNome());
+                    }
+
+                    break;
+
+                case 3:
+                    Veterinario vetEncontrado;
+
+                    System.out.println("Digite o ID do veterinario: ");
+                    Long idvet = sc.nextLong();
+                    sc.nextLine();
+
+                    vetEncontrado = daoVet.findById(Veterinario.class, idvet);
+
+                    if(vetEncontrado == null){
+                        System.out.println("não encontramos nenhum veterinario");
+                        break;
+                    }
+
+                    System.out.println("veterinario encontrado");
+                    System.out.println(vetEncontrado);
+
+                    break;
+                case 4:
+
+                    Veterinario vetExcluir;
+                    System.out.println("Digite o ID do veterinario: ");
+                    long vetID = sc.nextLong();
+                    sc.nextLine();
+                    daoVet.removeById(Veterinario.class, vetID);
+                    break;
+                default:
+                    System.out.println("opção invalida");
+
+
+            }
+        }while (opcao!=0);
+
+    }
 
     public static void menuAnimal (Scanner sc){
 
@@ -161,9 +268,14 @@ public class Main {
                     break;
                 }
 
+                System.out.println("Digite sua data de nascimento: ");
+                String dataNascimento = sc.nextLine();
+                DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy") ;
+                LocalDate data_formatada = LocalDate.parse(dataNascimento, formato);
+
                 System.out.println("Cidade encontrada " + cidade.getNome());
 
-                Tutores tutor = new Tutores(nome,cpf,numCasa,nomeRua,cidade);
+                Tutores tutor = new Tutores(nome,cpf,numCasa,nomeRua,cidade,data_formatada);
 
                 daoTutores.incluirAtomico(tutor);
 
