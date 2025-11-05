@@ -13,12 +13,208 @@ import java.util.Scanner;
 
 public class Main {
 
+    public static void menuCidade(Scanner sc) {
+
+        DAO<Cidade> daoCidade = new DAO<>();
+        DAO<Uf> daoUf = new DAO<>();
+        int opcao;
+
+        do {
+            System.out.println("\n--- Gerenciar Cidades ---");
+            System.out.println("1. Cadastrar nova Cidade");
+            System.out.println("2. Listar todas as Cidades");
+            System.out.println("3. Excluir Cidade");
+            System.out.println("0. Voltar ao menu principal");
+
+            opcao = sc.nextInt();
+            sc.nextLine();
+
+            switch (opcao) {
+                case 1:
+                    try {
+                        System.out.println("Digite o nome da Cidade:");
+                        String nome = sc.nextLine();
+
+                        System.out.println("Digite o ID da UF (Estado) desta cidade:");
+                        Long ufId = sc.nextLong();
+                        sc.nextLine();
+
+                        Uf ufEncontrada = daoUf.findById(Uf.class, ufId);
+
+                        if (ufEncontrada == null) {
+                            System.out.println("ERRO: UF com ID " + ufId + " não encontrada. Cadastro cancelado.");
+                            break;
+                        }
+
+                        System.out.println("Associando à UF: " + ufEncontrada.getSigla());
+
+                        Cidade novaCidade = new Cidade();
+                        novaCidade.setNome(nome);
+                        novaCidade.setUf(ufEncontrada);
+
+                        daoCidade.incluirAtomico(novaCidade);
+                        System.out.println("Cidade '" + nome + "' cadastrada com sucesso!");
+
+                    } catch (Exception e) {
+                        System.out.println("ERRO INESPERADO: " + e.getMessage());
+                    }
+                    break;
+
+                case 2:
+                    System.out.println("--- Lista de Cidades Cadastradas ---");
+                    List<Cidade> listaCidades = daoCidade.listarTodosAtomico(Cidade.class);
+
+                    for (Cidade cidade : listaCidades) {
+                        System.out.println("ID: " + cidade.getId() + " | Nome: " + cidade.getNome() + " | UF: " + cidade.getUf().getSigla());
+                    }
+                    break;
+
+                case 3:
+                    System.out.println("Digite o ID da Cidade a ser excluída:");
+                    Long idExcluir = sc.nextLong();
+                    sc.nextLine();
+
+                    daoCidade.removeById(Cidade.class, idExcluir);
+                    break;
+
+                case 0:
+                    System.out.println("Voltando ao menu principal...");
+                    break;
+
+                default:
+                    System.out.println("Opção inválida.");
+            }
+
+        } while (opcao != 0);
+    }
+
+    public static void menuUf(Scanner sc) {
+
+        DAO<Uf> daoUf = new DAO<>();
+        int opcao;
+
+        do {
+            System.out.println("\n--- Gerenciar Estados (UF) ---");
+            System.out.println("1. Cadastrar nova UF");
+            System.out.println("2. Listar todas as UFs");
+            System.out.println("3. Excluir UF");
+            System.out.println("0. Voltar ao menu principal");
+
+            opcao = sc.nextInt();
+            sc.nextLine();
+
+            switch (opcao) {
+                case 1:
+                    System.out.println("Digite a sigla da UF (ex: SP):");
+                    String sigla = sc.nextLine();
+
+                    System.out.println("Digite o nome do estado (ex: Sao Paulo):");
+                    String nome = sc.nextLine();
+
+                    Uf novaUf = new Uf();
+                    novaUf.setSigla(sigla);
+                    novaUf.setNome(nome);
+
+                    daoUf.incluirAtomico(novaUf);
+                    System.out.println("UF '" + sigla + "' cadastrada com sucesso!");
+                    break;
+
+                case 2:
+                    System.out.println("--- Lista de UFs Cadastradas ---");
+                    List<Uf> listaUfs = daoUf.listarTodosAtomico(Uf.class);
+
+                    for (Uf uf : listaUfs) {
+                        System.out.println("ID: " + uf.getId() + " | Sigla: " + uf.getSigla() + " | Nome: " + uf.getNome());
+                    }
+                    break;
+
+                case 3:
+                    System.out.println("Digite o ID da UF a ser excluída:");
+                    Long idExcluir = sc.nextLong();
+                    sc.nextLine();
+
+                    daoUf.removeById(Uf.class, idExcluir);
+                    break;
+
+                case 0:
+                    System.out.println("Voltando ao menu principal...");
+                    break;
+
+                default:
+                    System.out.println("Opção inválida.");
+            }
+
+        } while (opcao != 0);
+    }
+
+    public static void menuRaca(Scanner sc) {
+
+        DAO<Raca> daoRaca = new DAO<>();
+        int opcao;
+
+        do {
+
+            System.out.println("\n--- Gerenciar Raças ---");
+            System.out.println("1. Cadastrar nova Raça");
+            System.out.println("2. Listar todas as Raças");
+            System.out.println("3. Excluir Raça");
+            System.out.println("0. Voltar ao menu principal");
+
+
+            opcao = sc.nextInt();
+            sc.nextLine();
+
+            switch (opcao) {
+                case 1:
+
+                    System.out.println("Digite o nome da raça (ex: Labrador):");
+                    String nome = sc.nextLine();
+
+                    System.out.println("Digite uma breve descrição:");
+                    String descricao = sc.nextLine();
+
+                    Raca novaRaca = new Raca();
+                    novaRaca.setNome(nome);
+                    novaRaca.setDescricao(descricao);
+
+                    daoRaca.incluirAtomico(novaRaca);
+                    System.out.println("Raça '" + nome + "' cadastrada com sucesso!");
+                    break;
+
+                case 2:
+                    System.out.println("--- Lista de Raças Cadastradas ---");
+                    List<Raca> listaRacas = daoRaca.listarTodosAtomico(Raca.class);
+
+                    for (Raca raca : listaRacas) {
+                        System.out.println("ID: " + raca.getId() + " | Nome: " + raca.getNome());
+                    }
+                    break;
+
+                case 3:
+
+                    System.out.println("Digite o ID da raça a ser excluída:");
+                    Long idExcluir = sc.nextLong();
+                    sc.nextLine();
+
+                    daoRaca.removeById(Raca.class, idExcluir);
+                    break;
+
+                case 0:
+                    System.out.println("Voltando ao menu principal...");
+                    break;
+
+                default:
+                    System.out.println("Opção inválida.");
+            }
+
+        } while (opcao != 0);
+    }
+
     public static void menuConsulta (Scanner sc){
         int opcao = 0;
         DAO <Consulta> daoConsulta = new DAO<>();
         DAO <Animal> daoAnimal = new DAO<>();
         DAO <Veterinario> daoVeterinario = new DAO<>();
-
 
         do {
             System.out.println("Digite a opção desejada:");
@@ -485,7 +681,7 @@ public class Main {
                 menuCidade(sc);
                 break;
             case 6:
-                menuEstado(sc);
+                menuUf(sc);
                 break;
             case 7:
                 menuRaca (sc);
