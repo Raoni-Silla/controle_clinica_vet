@@ -7,10 +7,29 @@ import infra.DAO;
 import javax.swing.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+
+    public static void menuConsulta (Scanner sc){
+        int opcao = 0;
+
+        do {
+            System.out.println("Digite a opção desejada:");
+            System.out.println("1.Cadastrar Nova Consulta");
+            System.out.println("2.Listar Consultas");
+            System.out.println("3.Encontrar uma Consulta");
+            System.out.println("4.Excluir Uma Consulta");
+            System.out.println("0.Voltar ao menu principal");
+
+
+            opcao = sc.nextInt();
+            sc.nextLine();
+
+        }while (opcao != 0);
+    }
 
     public static void menuVet (Scanner sc){
 
@@ -55,24 +74,34 @@ public class Main {
                     long cidadeId = sc.nextLong();
                     sc.nextLine();
 
-                    System.out.println("Digite a data de nascimento: ");
-                    String dataAniversario = sc.nextLine();
+                    try {
+                        System.out.println("Digite a data de nascimento: dd/MM/yyyy ");
+                        String dataAniversario = sc.nextLine();
 
-                    Cidade cidade = daoCidade.findById(Cidade.class,cidadeId);
+                        Cidade cidade = daoCidade.findById(Cidade.class, cidadeId);
 
-                    if (cidade == null) {
-                        System.out.println("ERRO: Cidade com ID " + cidadeId + " não encontrada. Cadastro cancelado.");
-                        break;
+                        if (cidade == null) {
+                            System.out.println("ERRO: Cidade com ID " + cidadeId + " não encontrada. Cadastro cancelado.");
+                            break;
+                        }
+
+                        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                        LocalDate data_formatada = LocalDate.parse(dataAniversario, formato);
+
+                        System.out.println("Cidade encontrada " + cidade.getNome());
+
+                        Veterinario vet = new Veterinario(nomevet, cpf, nomeRua, numCasa, cidade, data_formatada);
+
+                        daoVet.incluirAtomico(vet);
+
+                    }catch (DateTimeParseException e){
+
+                        System.out.println("ERRO: " + e.getMessage());
+                        System.out.println("Data mal formatada");
+
+                    }catch (Exception e){
+                        System.out.println("ERRO: " + e.getMessage());
                     }
-
-                    DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy") ;
-                    LocalDate data_formatada = LocalDate.parse(dataAniversario, formato);
-
-                    System.out.println("Cidade encontrada " + cidade.getNome());
-
-                    Veterinario vet  = new Veterinario(nomevet,cpf,nomeRua,numCasa, cidade, data_formatada);
-
-                    daoVet.incluirAtomico(vet);
 
                     break;
 
@@ -342,6 +371,15 @@ public class Main {
                 menuTutor(sc);
                 break;
             case 2:
+                menuAnimal(sc);
+                break;
+            case 3:
+                menuVet(sc);
+                break;
+            case 4:
+                menuConsulta(sc);
+
+
 
         }
 

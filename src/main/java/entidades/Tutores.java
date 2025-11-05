@@ -68,18 +68,17 @@ public class Tutores {
         }
 
         if (Utilitarios.isCpfValido(cpfNumeros)) {
-            throw new IllegalArgumentException("CPF inválido");
-        }
+            this.cpf = cpf;
+        }else throw new IllegalArgumentException("CPF inválido");
 
-        this.cpf = cpf;
         }
 
         public void setCidade(Cidade cidade) {
 
         if (cidade == null){
-            this.cidade = cidade;
+            throw new IllegalArgumentException("cidade nulo");
         }
-        throw new IllegalArgumentException("cidade nulo");
+            this.cidade = cidade;
         }
 
 
