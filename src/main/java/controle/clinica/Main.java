@@ -15,6 +15,10 @@ public class Main {
 
     public static void menuConsulta (Scanner sc){
         int opcao = 0;
+        DAO <Consulta> daoConsulta = new DAO<>();
+        DAO <Animal> daoAnimal = new DAO<>();
+        DAO <Veterinario> daoVeterinario = new DAO<>();
+
 
         do {
             System.out.println("Digite a opção desejada:");
@@ -27,6 +31,103 @@ public class Main {
 
             opcao = sc.nextInt();
             sc.nextLine();
+
+
+            switch (opcao) {
+                case 1:
+                    try {
+                        System.out.println("Iniciando sistema de cadastro de consultas...");
+                        System.out.println("Digite o ID do animal: ");
+                        Long idAnimal = sc.nextLong();
+                        sc.nextLine();
+                        System.out.println("Digite o ID do veterinario: ");
+                        Long idVeterinario = sc.nextLong();
+                        sc.nextLine();
+                        System.out.println("Digite a data da consulta: ");
+                        String dataConsulta = sc.nextLine();
+                        System.out.println("Digite o valor da consulta R$: ");
+                        double valorConsulta = sc.nextDouble();
+                        sc.nextLine();
+
+                        LocalDate dataFormatada = LocalDate.parse(dataConsulta, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+                        System.out.println("Validando os dados, aguarde um momento.....");
+
+                        Veterinario vetAchado = daoVeterinario.findById(Veterinario.class,idVeterinario);
+                        Animal animal = daoAnimal.findById(Animal.class,idAnimal);
+
+                        if(vetAchado == null){
+                            System.out.println("Veterinario não encontrado");
+                            System.out.println("Encerrando programa");
+                            System.out.println("Digite um ID valido");
+                            break;
+                        }
+
+                        if(animal == null){
+                            System.out.println("Animal não encontrado");
+                            System.out.println("Encerrando programa");
+                            System.out.println("Digite um ID valido");
+                           break;
+                        }
+
+                        Consulta consulta = new Consulta(animal,vetAchado,dataFormatada, valorConsulta);
+                        daoConsulta.incluirAtomico(consulta);
+
+                        System.out.println("Consulta cadastrada com sucesso");
+                        System.out.println(consulta);
+
+                    }catch (DateTimeParseException e){
+
+                        System.out.println("ERRO: " + e.getMessage());
+                        System.out.println("Data mal formatada");
+
+                    }catch (Exception e){
+                        System.out.println("ERRO: " + e.getMessage());
+                    }
+
+
+
+                    break;
+                case 2:
+                    System.out.println("Listando todas as consultas...");
+
+                    List<Consulta> consultaList = daoConsulta.listarTodosAtomico(Consulta.class);
+
+                    for(Consulta consulta : consultaList){
+                        System.out.println(consulta + "\n");
+                    }
+
+                    break;
+                case 3:
+                    System.out.println("Digite o ID da consulta: ");
+
+                    Long idConsulta = sc.nextLong();
+                    sc.nextLine();
+                    Consulta consulta =  daoConsulta.findById(Consulta.class,idConsulta);
+
+                    if(consulta == null){
+                        System.out.println("Consulta inexistente ou ID digitado de forma errada");
+                        break;
+                    }
+
+                    System.out.println("Consulta encontrada com sucesso");
+                    System.out.println(consulta);
+
+                    break;
+                case 4:
+                    System.out.println("Digite o ID da consulta a ser excluida");
+                    Long idConsulta2 = sc.nextLong();
+                    sc.nextLine();
+
+                    daoConsulta.removeById(Consulta.class,idConsulta2);
+
+                    System.out.println("Consulta removida com sucesso");
+                    break;
+                default:
+                    System.out.println("opção não encontrada");
+            }
+
+
 
         }while (opcao != 0);
     }
@@ -378,8 +479,16 @@ public class Main {
                 break;
             case 4:
                 menuConsulta(sc);
+                break;
 
-
+            case 5:
+                menuCidade(sc);
+                break;
+            case 6:
+                menuEstado(sc);
+                break;
+            case 7:
+                menuRaca (sc);
 
         }
 
