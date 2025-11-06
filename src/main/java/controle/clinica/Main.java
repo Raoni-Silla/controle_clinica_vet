@@ -2,6 +2,7 @@ package controle.clinica;
 
 
 import entidades.*;
+import infra.ConsultaDao;
 import infra.DAO;
 
 import javax.swing.*;
@@ -215,6 +216,7 @@ public class Main {
         DAO <Consulta> daoConsulta = new DAO<>();
         DAO <Animal> daoAnimal = new DAO<>();
         DAO <Veterinario> daoVeterinario = new DAO<>();
+        ConsultaDao consultaDao = new ConsultaDao();
 
         do {
             System.out.println("Digite a opção desejada:");
@@ -318,6 +320,54 @@ public class Main {
                     daoConsulta.removeById(Consulta.class,idConsulta2);
 
                     System.out.println("Consulta removida com sucesso");
+                    break;
+                case 5:
+                    try {
+
+                        System.out.println("--- Relatório de Consultas por Data ---");
+
+                        System.out.println("Digite a Data Inicial (dd/MM/yyyy):");
+                        String dataInicioStr = sc.nextLine();
+                        LocalDate dataInicio = LocalDate.parse(dataInicioStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+                        System.out.println("Digite a Data Final (dd/MM/yyyy):");
+                        String dataFimStr = sc.nextLine();
+                        LocalDate dataFim = LocalDate.parse(dataFimStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+
+                        List<Consulta> listaDeConsultas = consultaDao.RelatorioConsultasPorData(dataInicio, dataFim);
+
+                        if (listaDeConsultas.isEmpty()) {
+                            System.out.println("Nenhuma consulta encontrada nesse período.");
+                            break;
+                        }
+
+                        System.out.println("--- Consultas Encontradas ---");
+
+
+                        for (Consulta consulta1 : listaDeConsultas) {
+                            System.out.println("--------------------");
+
+                            System.out.println("Animal: " + consulta1.getAnimal().getNome());
+                            System.out.println("Veterinário: " + consulta1.getVeterinario().getNome());
+                            System.out.println("Data: " + consulta1.getDataConsulta());
+                            System.out.println("Valor: R$ " + consulta1.getValorConsulta());
+                        }
+
+                        double valorTotal = listaDeConsultas.stream()
+                                .mapToDouble(Consulta::getValorConsulta)
+                                .sum();
+
+                        System.out.println("====================");
+                        System.out.printf("VALOR TOTAL DAS CONSULTAS: R$ %.2f\n", valorTotal);
+                        System.out.println("====================");
+
+                    } catch (DateTimeParseException e) {
+                        System.out.println("ERRO: Formato de data inválido. Use dd/MM/yyyy.");
+                    } catch (Exception e) {
+                        System.out.println("ERRO INESPERADO: " + e.getMessage());
+                        e.printStackTrace();
+                    }
                     break;
                 default:
                     System.out.println("opção não encontrada");
