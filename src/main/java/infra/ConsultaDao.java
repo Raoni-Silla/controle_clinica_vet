@@ -28,5 +28,27 @@ public class ConsultaDao extends DAO <Consulta> {
                 em.close();
             }
         }
+
+    }
+
+
+    public List<Consulta> RelatorioPorVetEDatas(Long idVet, LocalDate dataInicio, LocalDate dataFim){
+        String jpql = "SELECT c FROM Consulta c " +
+                "WHERE c.dataConsulta BETWEEN :dataInicio AND :dataFim " +
+                "AND c.veterinario.id = :idDoVet";
+
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            TypedQuery<Consulta> query = em.createQuery(jpql, Consulta.class);
+            query.setParameter("dataInicio", dataInicio);
+            query.setParameter("dataFim", dataFim);
+            query.setParameter("idDoVet", idVet);
+            return query.getResultList();
+
+        } finally {
+            em.close();
+        }
     }
 }
+

@@ -224,6 +224,7 @@ public class Main {
             System.out.println("2.Listar Consultas");
             System.out.println("3.Encontrar uma Consulta");
             System.out.println("4.Excluir Uma Consulta");
+            System.out.println("Relatorio de Consultas por Periodo");
             System.out.println("0.Voltar ao menu principal");
 
 
